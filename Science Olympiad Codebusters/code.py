@@ -19,9 +19,10 @@
 # Make sure your computer has numpy installed!
 # Easiest way to run: "python -i code.py" or "python3 -i code.py" depending on your installation of python
 #
-# Hopes for the future:
-# - RSA key generation + encryption/decryption
-# - Maybe machine cryptanalysis for aristocrats or one of the simpler ciphers
+# Hopes for future versions:
+#   - randomly generate invertible 3x3 matrices
+#   - RSA key generation + encryption/decryption
+#   - Maybe machine cryptanalysis for aristocrats or one of the simpler ciphers
 # 
 # Cheers!
 
@@ -90,12 +91,7 @@ def antiaffine(input, a=1, b=0):
         if is_alpha:
             n = (ainv*(n-b)) % 26
         output += get_char(is_alpha, is_upper, n)
-    return output 
-
-caesar = lambda input, shift: affine(input = input, a = 1, b = shift)
-anticaesar = lambda input, shift: affine(input = input, a = 1, b = -shift)
-atbash = lambda input: affine(input = input, a = -1, b = -1)
-antiatbash = atbash #provided for convenience but also that's the whole idea of atbash
+    return output
 
 def vigenere(input, code):
     codelen = len(code)
@@ -108,8 +104,6 @@ def vigenere(input, code):
             i += 1
         output += get_char(is_alpha, is_upper, n)
     return output
-
-antivigenere = lambda input, code: vigenere(input, affine(code, -1,0))    
 
 def aristocrats(input, perm):
     """ Give a permutation of [0, ..., 25]
@@ -200,12 +194,18 @@ def mat_inv(mat):
     if np.all(np.isclose(out, np.round(out), rtol=1e-6, atol=1e-8)):
         print(vint(out) %26)
         return vint(out) % 26
-    else:
-        print("Oops, we have some numerical accuracy issues while inverting the matrix! Please be careful.")
-        print("Here is what we got before rounding:", out)
-        #maybe don't return if it's too far?
-        return out
+    print("Oops, we have some numerical accuracy issues while inverting the matrix! Please be careful.")
+    print("Here is what we got before rounding:", out)
+    #maybe don't return if it's too far?
+    return out
+
+#Special case definitions
+caesar = lambda input, shift: affine(input = input, a = 1, b = shift)
+anticaesar = lambda input, shift: affine(input = input, a = 1, b = -shift)
+atbash = lambda input: affine(input = input, a = -1, b = -1)
+antiatbash = atbash #hmmmmmm it's really just the same
+antivigenere = lambda input, code: vigenere(input, affine(code, -1,0))    
 antihill = lambda input, m: hill(input, mat_inv(m))
 
-ma = np.array([(1,2,3),(3,7,5),(0,-1,11)], dtype = np.int64)
+ma = np.array([(1,2,3),(3,7,5),(0,-1,11)], dtype = np.int64) #sample invertible 3x3 matrix
 identity = np.array([[1,0,0],[0,1,0],[0,0,1]], dtype = np.int64)
