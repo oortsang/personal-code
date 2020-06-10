@@ -1,0 +1,14 @@
+FILE = playground.cpp
+CC = g++
+OPT = -O0
+WARNINGS = -Wall
+DEBUG = -g3
+CFLAGS = $(OPT) $(DEBUG) $(WARNINGS)
+LIBS = -lglu32 -lopengl32 -lfreeglut
+
+
+%.o: %.c
+	$(CC) -c -o $@ $(CFLAGS)
+
+make: playground.o
+	$(cc) -o playground $(LIBS) playground.o
